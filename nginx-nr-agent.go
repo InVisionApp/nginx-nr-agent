@@ -22,9 +22,9 @@ import (
 )
 
 const (
-	AgentGuid          = "com.nginx.newrelic-agent"
-	AgentVersion       = "2.0.0"
-	PollInterval       = 60 * time.Second // How often we're polling. New Relic expects 1 minute
+	AgentGuid    = "com.nginx.newrelic-agent"
+	AgentVersion = "2.0.0"
+	PollInterval = 60 * time.Second // How often we're polling. New Relic expects 1 minute
 )
 
 var (
@@ -249,8 +249,7 @@ func uploadOne(upload *NrUpload) error {
 func processStats(quit chan struct{}, nrChan chan *NrMetric) {
 	metric, err := GetStats(config.StatsUrl)
 	if err != nil {
-		log.Errorf("Unable to fetch stats from nginx: %s", err)
-		return
+		log.Errorf("Unable to fetch initial stats from nginx: %s", err)
 	}
 
 	processOne(metric)
@@ -259,7 +258,10 @@ func processStats(quit chan struct{}, nrChan chan *NrMetric) {
 	for {
 		select {
 		case <-time.After(PollInterval):
-			metric, _ := GetStats(config.StatsUrl)
+			metric, err := GetStats(config.StatsUrl)
+			if err != nil {
+				log.Errorf("Unable to fetch interval stats from nginx: %s", err)
+			}
 			processOne(metric)
 			notifyNewRelic(nrChan)
 		case <-quit:
