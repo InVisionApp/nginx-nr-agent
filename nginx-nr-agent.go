@@ -247,14 +247,6 @@ func uploadOne(upload *NrUpload) error {
 
 // Immediately, and on a timed loop, update the metrics.
 func processStats(quit chan struct{}, nrChan chan *NrMetric) {
-	metric, err := GetStats(config.StatsUrl)
-	if err != nil {
-		log.Errorf("Unable to fetch initial stats from nginx: %s", err)
-	} else {
-		processOne(metric)
-		notifyNewRelic(nrChan)
-	}
-
 	for {
 		select {
 		case <-time.After(PollInterval):
