@@ -250,10 +250,10 @@ func processStats(quit chan struct{}, nrChan chan *NrMetric) {
 	metric, err := GetStats(config.StatsUrl)
 	if err != nil {
 		log.Errorf("Unable to fetch initial stats from nginx: %s", err)
+	} else {
+		processOne(metric)
+		notifyNewRelic(nrChan)
 	}
-
-	processOne(metric)
-	notifyNewRelic(nrChan)
 
 	for {
 		select {
