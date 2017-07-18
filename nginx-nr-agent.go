@@ -269,7 +269,7 @@ func processStats(quit chan struct{}, nrChan chan *NrMetric) {
 }
 
 func main() {
-	log.SetLevel(log.InfoLevel)
+	log.SetLevel(log.DebugLevel)
 
 	envconfig.Process("agent", &config)
 	rubberneck.Print(config)
